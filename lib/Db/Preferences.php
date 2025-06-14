@@ -25,8 +25,6 @@ class Preferences extends Entity implements JsonSerializable {
 	public const TABLE = 'polls_preferences';
 
 	public const DEFAULT = [
-		'useCommentsAlternativeStyling' => false,
-		'useAlternativeStyling' => false,
 		'calendarPeek' => false,
 		'checkCalendars' => [],
 		'checkCalendarsHoursBefore' => 0,
@@ -36,6 +34,12 @@ class Preferences extends Entity implements JsonSerializable {
 		'performanceThreshold' => 1000,
 		'pollCombo' => [],
 		'relevantOffset' => 30,
+		'useNewPollDialogInNavigation' => false,
+		'useNewPollInPollist' => false,
+		'useAlternativeStyling' => false,
+		'useCommentsAlternativeStyling' => false,
+		'useCounterAlternativeStyling' => false,
+		'verbosePollsList' => false,
 	];
 
 	// schema columns

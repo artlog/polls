@@ -25,7 +25,9 @@ export type UserPreferences = {
 	relevantOffset: number
 	useNewPollDialogInNavigation: boolean
 	useNewPollInPollist: boolean
+	useAlternativeStyling: boolean
 	useCommentsAlternativeStyling: boolean
+	useCounterAlternativeStyling: boolean
 	useAlternativeStyling: boolean
 	verbosePollsList: boolean
 }
@@ -63,7 +65,9 @@ export const usePreferencesStore = defineStore('preferences', {
 			relevantOffset: 30,
 			useNewPollDialogInNavigation: false,
 			useNewPollInPollist: false,
+			useAlternativeStyling: false,
 			useCommentsAlternativeStyling: false,
+			useCounterAlternativeStyling: false,
 			useAlternativeStyling: false,
 			verbosePollsList: false,
 		},
