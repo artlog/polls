@@ -7,13 +7,19 @@
 import { computed } from 'vue'
 import { DateTime, Duration, Interval } from 'luxon'
 import { useSessionStore } from '../../../stores/session.ts'
+import { usePreferencesStore } from '../../../stores/preferences.ts'
+import { t } from '@nextcloud/l10n'
+
+const preferencesStore = usePreferencesStore()
 
 interface Props {
 	dateTime: DateTime
 	duration?: Duration
 }
-const { dateTime: luxonDate, duration: luxonDuration = Duration.fromMillis(0) } =
-	defineProps<Props>()
+const {
+	dateTime: luxonDate,
+	duration: luxonDuration = Duration.fromMillis(0)
+} = defineProps<Props>()
 
 const from = computed(() =>
 	luxonDate.setLocale(sessionStore.currentUser.languageCodeIntl),
@@ -57,10 +63,42 @@ const isSameTime = computed(() => luxonDuration.as('seconds') === 0)
 const interval = computed(() =>
 	Interval.fromDateTimes(from.value.toUTC(), to.value.toUTC()),
 )
+
 </script>
 
 <template>
-	<div :title="interval.toISO()" class="datebox">
+	<div v-if="preferencesStore.user.useDateboxAlternativeStyling" :title="interval.toISO()" class="datebox">
+		<div class="month from">
+			{{ from.toLocaleString({ month: 'short', year: 'numeric' }) }}
+		</div>
+
+		<div class="day from">
+			{{ from.toLocaleString({ weekday: 'short' }) }}
+		</div>
+
+		<div class="day from">
+			{{ from.toLocaleString({ day: 'numeric' }) }}
+		</div>
+
+		<div v-if="allDay" class="time from">
+			{{ t('polls', 'All day') }}
+		</div>
+		<div v-else class="time from">
+			<div>
+				{{
+					isSameDay && !isSameTime
+						? interval.toLocaleString(DateTime.TIME_SIMPLE)
+						: from.toLocaleString(DateTime.TIME_SIMPLE)
+				}}
+			</div>
+			<div>
+				{{ luxonDuration.toString() }}
+			</div>
+		</div>
+
+	</div>
+
+	<div v-else :title="interval.toISO()" class="datebox">
 		<div class="month from" :class="{ span: isSameMonth }">
 			{{
 				from.toLocaleString(

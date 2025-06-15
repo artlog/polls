@@ -39,6 +39,7 @@ class Preferences extends Entity implements JsonSerializable {
 		'useAlternativeStyling' => false,
 		'useCommentsAlternativeStyling' => false,
 		'useCounterAlternativeStyling' => false,
+		'useDateboxAlternativeStyling' => false,
 		'verbosePollsList' => false,
 	];
 

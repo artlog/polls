@@ -28,7 +28,7 @@ export type UserPreferences = {
 	useAlternativeStyling: boolean
 	useCommentsAlternativeStyling: boolean
 	useCounterAlternativeStyling: boolean
-	useAlternativeStyling: boolean
+	useDateboxAlternativeStyling: boolean
 	verbosePollsList: boolean
 }
 
@@ -68,7 +68,7 @@ export const usePreferencesStore = defineStore('preferences', {
 			useAlternativeStyling: false,
 			useCommentsAlternativeStyling: false,
 			useCounterAlternativeStyling: false,
-			useAlternativeStyling: false,
+			useDateboxAlternativeStyling: false,
 			verbosePollsList: false,
 		},
 		session: {
