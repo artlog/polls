@@ -37,7 +37,6 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Search\ISearchQuery;
 
 class PollService {
-
 	/**
 	 * @psalm-suppress PossiblyUnusedMethod
 	 */
@@ -198,6 +197,7 @@ class PollService {
 		$this->poll->setExpire(0);
 		$this->poll->setAnonymous(0);
 		$this->poll->setAllowMaybe(0);
+		$this->poll->setChosenRank('');
 		$this->poll->setVoteLimit(0);
 		$this->poll->setShowResults(Poll::SHOW_RESULTS_ALWAYS);
 		$this->poll->setDeleted(0);
@@ -354,6 +354,7 @@ class PollService {
 		$this->poll->setExpire($origin->getExpire());
 		$this->poll->setAnonymous($origin->getAnonymous());
 		$this->poll->setAllowMaybe($origin->getAllowMaybe());
+		$this->poll->setChosenRank($origin->getChosenRank());
 		$this->poll->setVoteLimit($origin->getVoteLimit());
 		$this->poll->setShowResults($origin->getShowResults());
 		$this->poll->setAdminAccess($origin->getAdminAccess());
@@ -401,13 +402,12 @@ class PollService {
 
 	/**
 	 * Get valid values for pollType
-	 *
 	 * @return string[]
 	 *
 	 * @psalm-return array{0: string, 1: string}
 	 */
 	private function getValidPollType(): array {
-		return [Poll::TYPE_DATE, Poll::TYPE_TEXT];
+		return [Poll::TYPE_DATE, Poll::TYPE_TEXT,Poll::TYPE_RANKED_TEXT];
 	}
 
 	/**

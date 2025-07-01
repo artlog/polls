@@ -41,7 +41,9 @@ use OCP\IURLGenerator;
  * @method int getAllowComment()
  * @method void setAllowComment(int $value)
  * @method int getAllowMaybe()
+ * @method string getChosenRank()
  * @method void setAllowMaybe(int $value)
+ * @method void setChosenRank(string $value)
  * @method string getAllowProposals()
  * @method void setAllowProposals(string $value)
  * @method int getProposalsExpire()
@@ -79,6 +81,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	public const TABLE = 'polls_polls';
 	public const TYPE_DATE = 'datePoll';
 	public const TYPE_TEXT = 'textPoll';
+	public const TYPE_RANKED_TEXT = 'textRankPoll';
 	public const ACCESS_HIDDEN = 'hidden';
 	public const ACCESS_PUBLIC = 'public';
 	public const ACCESS_PRIVATE = 'private';
@@ -135,6 +138,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	protected string $access = '';
 	protected int $anonymous = 0;
 	protected int $allowMaybe = 0;
+	protected string $chosenRank = '';
 	protected string $allowProposals = '';
 	protected int $proposalsExpire = 0;
 	protected int $voteLimit = 0;
@@ -155,7 +159,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	protected string $shareToken = '';
 	protected ?string $groupShares = '';
 	protected int $countOptions = 0;
-	
+
 	// subqueried columns
 	protected int $currentUserOrphanedVotes = 0;
 	protected int $currentUserVotes = 0;
@@ -168,6 +172,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 		$this->addType('anonymous', 'integer');
 		$this->addType('allowComment', 'integer');
 		$this->addType('allowMaybe', 'integer');
+		$this->addType('chosenRank', 'string');
 		$this->addType('proposalsExpire', 'integer');
 		$this->addType('voteLimit', 'integer');
 		$this->addType('optionLimit', 'integer');
@@ -175,7 +180,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 		$this->addType('hideBookedUp', 'integer');
 		$this->addType('useNo', 'integer');
 		$this->addType('lastInteraction', 'integer');
-		
+
 		// joined columns
 		$this->addType('isCurrentUserLocked', 'integer');
 		$this->addType('maxDate', 'integer');
@@ -229,6 +234,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 			'access' => $this->getAccess(),
 			'allowComment' => boolval($this->getAllowComment()),
 			'allowMaybe' => boolval($this->getAllowMaybe()),
+			'chosenRank' => $this->getChosenRank(),
 			'allowProposals' => $this->getAllowProposals(),
 			'anonymous' => boolval($this->getAnonymous()),
 			'autoReminder' => $this->getAutoReminder(),
@@ -283,6 +289,11 @@ class Poll extends EntityWithUser implements JsonSerializable {
 		$this->setAccess($pollConfiguration['access'] ?? $this->getAccess());
 		$this->setAllowComment($pollConfiguration['allowComment'] ?? $this->getAllowComment());
 		$this->setAllowMaybe($pollConfiguration['allowMaybe'] ?? $this->getAllowMaybe());
+		$chosenRank = $pollConfiguration['chosenRank'] ?? $this->getChosenRank();
+		if (is_string($chosenRank)) {
+			$chosenRank = json_decode($chosenRank, true);
+		}
+		$this->setChosenRank($chosenRank);
 		$this->setAllowProposals($pollConfiguration['allowProposals'] ?? $this->getAllowProposals());
 		$this->setAnonymous($pollConfiguration['anonymous'] ?? $this->getAnonymous());
 		$this->setAutoReminder($pollConfiguration['autoReminder'] ?? $this->getAutoReminder());
@@ -320,7 +331,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 
 		return $this->userRole;
 	}
-	
+
 	public function getVoteUrl(): string {
 		return $this->urlGenerator->linkToRouteAbsolute(
 			AppConstants::APP_ID . '.page.vote',
@@ -472,6 +483,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 
 	/**
 	 * Request a permission level and get exception if denied
+	 *
 	 * @throws ForbiddenException Thrown if access is denied
 	 */
 	public function request(string $permission): void {
@@ -499,13 +511,14 @@ class Poll extends EntityWithUser implements JsonSerializable {
 			self::PERMISSION_OPTION_DELETE => $this->getAllowDeleteOption(),
 			self::PERMISSION_COMMENT_ADD => $this->getAllowCommenting(),
 			self::PERMISSION_COMMENT_DELETE => $this->getAllowDeleteComment(),
-			self::PERMISSION_VOTE_EDIT => $this->getAllowVote(),
+			self::PERMISION_VOTE_EDIT => $this->getAllowVote(),
 			default => false,
 		};
 	}
 
 	/**
 	 * getIsInvolved - Is current user involved in current poll?
+	 *
 	 * @return bool Returns true, if the current user is involved in the poll via share, as a participant or as the poll owner.
 	 */
 	private function getIsInvolved(): bool {
@@ -525,6 +538,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 
 	/**
 	 * getIsParticipant - Is user a participant?
+	 *
 	 * @return bool Returns true, if the current user is already a particitipant of the current poll.
 	 */
 	private function getIsParticipant(): bool {
@@ -534,6 +548,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	/**
 	 * getIsInvitedViaGroupShare - Is the poll shared via group share?
 	 * where the current user is member of. This only affects logged in users.
+	 *
 	 * @return bool Returns true, if the current poll contains a group share with a group,
 	 */
 	private function getIsInvitedViaGroupShare(): bool {
@@ -552,6 +567,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	/**
 	 * getIsPersonallyInvited - Is the poll shared via user share with the current user?
 	 * Checking via user role
+	 *
 	 * @return bool Returns true, if the current poll contains a user role which matches a share type
 	 */
 	private function getIsPersonallyInvited(): bool {
@@ -568,7 +584,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 	 * The detailed checks - For the sake of readability, the queries and selections
 	 * were kept detailed and with low complexity
 	 */
-	
+
 	/**
 	 * Checks, if the user has delegated admin rights to edit poll settings via share
 	 */
@@ -674,7 +690,7 @@ class Poll extends EntityWithUser implements JsonSerializable {
 		// Allow, if poll requests proposals
 		return $this->getAllowProposals() === Poll::PROPOSAL_ALLOW;
 	}
-	
+
 	/**
 	 * Is current user allowed to delete options from poll
 	 */
@@ -779,7 +795,6 @@ class Poll extends EntityWithUser implements JsonSerializable {
 		if (!$this->getAllowAccessPoll()) {
 			return false;
 		}
-		
 		// show results, when poll is closed
 		if ($this->getShowResults() === Poll::SHOW_RESULTS_CLOSED && $this->getExpired()) {
 			return true;
