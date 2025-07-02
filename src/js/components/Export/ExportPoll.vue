@@ -179,7 +179,12 @@ export default {
 			}
 
 			if (['html', 'ods', 'xlsx'].includes(exportType)) {
-				this.addVotesArray('symbols')
+				if (this.pollType === 'textRankPoll') {
+					this.addVotesArray('raw')
+				}
+				else {
+					this.addVotesArray('symbols')
+				}
 			} else if (['csv'].includes(exportType)) {
 				this.addVotesArray('raw')
 			} else {
