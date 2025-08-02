@@ -100,10 +100,6 @@ const descriptionLine = computed(() => {
 			v-if="poll.type === 'textPoll'"
 			class="item__type"
 			:title="pollTypes[poll.type].name" />
-		<TextPollIcon
-			v-else-if="poll.type === 'genericPoll'"
-			class="item__type"
-			:title="pollTypes[poll.type].name" />
 		<DatePollIcon v-else class="item__type" :title="pollTypes[poll.type].name" />
 
 		<div

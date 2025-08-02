@@ -81,9 +81,9 @@ use OCP\IURLGenerator;
 class Poll extends EntityWithUser implements JsonSerializable {
 	public const TABLE = 'polls_polls';
 	public const TYPE_DATE = 'datePoll';
-	public const TYPE_GENERIC = 'genericPoll';
 	public const TYPE_TEXT = 'textPoll';
 	public const VARIANT_SIMPLE = 'simple';
+	public const VARIANT_GENERIC = 'generic';
 	public const ACCESS_HIDDEN = 'hidden';
 	public const ACCESS_PUBLIC = 'public';
 	public const ACCESS_PRIVATE = 'private';

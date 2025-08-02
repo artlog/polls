@@ -139,15 +139,11 @@ function changeView(): void {
 		preferencesStore.setViewDatePoll(
 			pollStore.viewMode === 'table-view' ? 'list-view' : 'table-view',
 		)
-	} else if (pollStore.type === 'textPoll') {
+	} else {
 		preferencesStore.setViewTextPoll(
 			pollStore.viewMode === 'table-view' ? 'list-view' : 'table-view',
 		)
-	} else if (pollStore.type === 'genericPoll' ) {
-		preferencesStore.setViewTextPoll(
-			pollStore.viewMode === 'table-view' ? 'list-view' : 'table-view',
-		)
-	}
+	}	
 }
 
 /**

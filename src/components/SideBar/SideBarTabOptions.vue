@@ -94,7 +94,7 @@ onUnmounted(() => {
 		</ConfigBox>
 
 		<ConfigBox
-			v-if="pollStore.type === 'textPoll' || pollStore.type === 'genericPoll'"
+			v-if="pollStore.type === 'textPoll'"
 			v-bind="configBoxProps.textOptions">
 			<template #icon>
 				<TextOptionsIcon />

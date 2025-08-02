@@ -71,7 +71,7 @@ const votesStore = useVotesStore()
 			<ConfigForceConfidentialComments
 				v-if="pollStore.configuration.allowComment"
 				@change="pollStore.write" />
-			<template v-if="pollStore.type === 'genericPoll'">
+			<template v-if="pollStore.votingVariant === 'generic'">
 			<ConfigAllowMayBe @change="pollStore.write" />
 			<ConfigUseNo @change="pollStore.write" />
 			<ConfigAnonymous @change="pollStore.write" />
@@ -80,7 +80,7 @@ const votesStore = useVotesStore()
 			<ConfigOptionLimit @change="pollStore.write" />
 		</ConfigBox>
 
-		<ConfigBox v-if="pollStore.type === 'genericPoll'" :name="t('polls', 'Generic Options')">
+		<ConfigBox v-if="pollStore.votingVariant === 'generic'" :name="t('polls', 'Generic Options')">
 			<template #icon>
 				<PollConfigIcon />
 			</template>

@@ -108,7 +108,7 @@ class OptionService {
 	public function add(int $pollId, SimpleOption $simpleOption, bool $voteYes = false): Option {
 		$this->getPoll($pollId, Poll::PERMISSION_OPTION_ADD);
 
-		if ($this->poll->getType() === Poll::TYPE_TEXT or $this->poll->getType() === Poll::TYPE_GENERIC) {
+		if ($this->poll->getType() === Poll::TYPE_TEXT) {
 			$simpleOption->setOrder($this->getHighestOrder($pollId) + 1);
 		}
 

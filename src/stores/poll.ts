@@ -35,7 +35,7 @@ import { useSharesStore } from './shares.ts'
 import { useCommentsStore } from './comments.ts'
 import { AxiosError } from '@nextcloud/axios'
 
-export type PollType = 'textPoll' | 'datePoll' | 'genericPoll'
+export type PollType = 'textPoll' | 'datePoll'
 
 type PollTypesType = {
 	name: string
@@ -45,15 +45,25 @@ export const pollTypes: Record<PollType, PollTypesType> = {
 	textPoll: {
 		name: t('polls', 'Text poll'),
 	},
-	genericPoll: {
-		name: t('polls', 'Generic poll'),
-	},
 	datePoll: {
 		name: t('polls', 'Date poll'),
 	}
 }
 
-export type VoteVariant = 'simple'
+export type VotingVariant = 'simple' | 'generic'
+
+type VotingVariantsType = {
+	name : string
+}
+
+export const votingVariants: Record<VotingVariant, VotingVariantsType> = {
+	simple: {
+		name: t('polls', 'Simple variant'),
+	},
+	generic: {
+		name: t('polls', 'Generic variant'),
+	}
+}
 export type AccessType = 'private' | 'open'
 export type ShowResults = 'always' | 'closed' | 'never'
 export type AllowProposals = 'allow' | 'disallow' | 'review'
@@ -141,7 +151,7 @@ export type CurrentUserStatus = {
 export type Poll = {
 	id: number
 	type: PollType
-	voteVariant: VoteVariant
+	votingVariant: VotingVariant
 	descriptionSafe: string
 	configuration: PollConfiguration
 	owner: User
@@ -164,7 +174,7 @@ export const usePollStore = defineStore('poll', {
 	state: (): Poll => ({
 		id: 0,
 		type: 'datePoll',
-		voteVariant: 'simple',
+		votingVariant: 'simple',
 		descriptionSafe: '',
 		configuration: {
 			title: '',
@@ -253,21 +263,16 @@ export const usePollStore = defineStore('poll', {
 
 		getChosenRank(): string[] {
 			try {
-	 		  const parsed = JSON.parse(this.configuration.chosenRank || '[]')
-	    		  return Array.isArray(parsed) ? parsed : []
+	 			const parsed = JSON.parse(this.configuration.chosenRank || '[]')
+	    		return Array.isArray(parsed) ? parsed : []
 	  		} catch {
-	      			return DEFAULT_CHOSEN_RANK;
-	    		}
+	      		return DEFAULT_CHOSEN_RANK;
+	    	}
 		},
-
 
 		viewMode(state): ViewMode {
 			const preferencesStore = usePreferencesStore()
 			if (state.type === 'textPoll') {
-				return preferencesStore.viewTextPoll
-			}
-
-			if (state.type === 'genericPoll') {
 				return preferencesStore.viewTextPoll
 			}
 
@@ -457,11 +462,11 @@ export const usePollStore = defineStore('poll', {
 			}
 		},
 
-		async add(payload: { type: PollType; title: string }): Promise<Poll | void> {
+		async add(payload: { type: PollType; title: string; votingVariant: VotingVariant }): Promise<Poll | void> {
 			const pollsStore = usePollsStore()
 
 			try {
-				const response = await PollsAPI.addPoll(payload.type, payload.title)
+				const response = await PollsAPI.addPoll(payload.type, payload.title, payload.votingVariant)
 				return response.data.poll
 			} catch (error) {
 				if ((error as AxiosError)?.code === 'ERR_CANCELED') {

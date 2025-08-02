@@ -68,7 +68,7 @@ function onClick() {
 
 <template>
 	<div class="vote-cell-container">
-	<div v-if="pollStore.type === 'genericPoll'" class="generic-vote">
+	<div v-if="pollStore.votingVariant === 'generic'" class="generic-vote">
 		<span v-if="!props.active" class="selected-value">
 			{{ selectedRank }}
 		</span>

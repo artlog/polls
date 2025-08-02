@@ -33,7 +33,7 @@ const sessionStore = useSessionStore()
 		"
 		:class="{ closed: poll.status.isExpired }">
 		<template #icon>
-			<TextPollIcon v-if="poll.type === 'textPoll' || poll.type==='genericPoll'" />
+			<TextPollIcon v-if="poll.type === 'textPoll'"/>
 			<DatePollIcon v-else />
 		</template>
 		<template #actions>

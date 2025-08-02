@@ -58,7 +58,6 @@ onMounted(() => {
 					<div class="poll-item__item">
 						<div class="item__icon-spacer">
 							<TextPollIcon v-if="item.type === 'textPoll'" />
-							<TextPollIcon v-else-if="item.type === 'genericPoll'" />
 							<DatePollIcon v-else />
 						</div>
 
